@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Model\Order\Total\Config;
 
@@ -60,13 +61,13 @@ class Base extends \Magento\Sales\Model\Config\Ordered
      * @param string $totalCode
      * @param array $totalConfig
      * @return \Magento\Sales\Model\Order\Total\AbstractTotal
-     * @throws \Magento\Framework\Model\Exception
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function _initModelInstance($class, $totalCode, $totalConfig)
     {
         $model = $this->_orderTotalFactory->create($class);
         if (!$model instanceof \Magento\Sales\Model\Order\Total\AbstractTotal) {
-            throw new \Magento\Framework\Model\Exception(
+            throw new \Magento\Framework\Exception\LocalizedException(
                 __('The total model should be extended from \Magento\Sales\Model\Order\Total\AbstractTotal.')
             );
         }

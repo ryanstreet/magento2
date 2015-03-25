@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Model\Customer\Attribute\Source;
 
@@ -17,18 +18,16 @@ class Website extends \Magento\Eav\Model\Entity\Attribute\Source\Table
     protected $_store;
 
     /**
-     * @param \Magento\Core\Helper\Data $coreData
      * @param \Magento\Eav\Model\Resource\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory
      * @param \Magento\Eav\Model\Resource\Entity\Attribute\OptionFactory $attrOptionFactory
      * @param \Magento\Store\Model\System\Store $store
      */
     public function __construct(
-        \Magento\Core\Helper\Data $coreData,
         \Magento\Eav\Model\Resource\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory,
         \Magento\Eav\Model\Resource\Entity\Attribute\OptionFactory $attrOptionFactory,
         \Magento\Store\Model\System\Store $store
     ) {
-        parent::__construct($coreData, $attrOptionCollectionFactory, $attrOptionFactory);
+        parent::__construct($attrOptionCollectionFactory, $attrOptionFactory);
         $this->_store = $store;
     }
 

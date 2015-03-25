@@ -1,11 +1,12 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog;
 
-use Magento\Framework\Model\Exception;
+use Magento\Framework\Exception\LocalizedException;
 
 class Delete extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
 {
@@ -25,7 +26,7 @@ class Delete extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
                 $this->messageManager->addSuccess(__('The rule has been deleted.'));
                 $this->_redirect('catalog_rule/*/');
                 return;
-            } catch (Exception $e) {
+            } catch (LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
                 $this->messageManager->addError(

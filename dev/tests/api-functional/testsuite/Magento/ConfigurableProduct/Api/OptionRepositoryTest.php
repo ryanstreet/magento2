@@ -1,11 +1,13 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
-namespace Magento\ConfigurableProduct\Api;
 
-use Magento\Webapi\Model\Rest\Config;
+// @codingStandardsIgnoreFile
+
+namespace Magento\ConfigurableProduct\Api;
 
 class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstract
 {
@@ -107,14 +109,25 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
 
     /**
      * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     * @expectedException \Exception
-     * @expectedExceptionMessage Requested option doesn't exist: -42
      */
     public function testGetUndefinedOption()
     {
+        $expectedMessage = 'Requested option doesn\'t exist: %1';
         $productSku = 'configurable';
         $attributeId = -42;
-        $this->get($productSku, $attributeId);
+        try {
+            $this->get($productSku, $attributeId);
+        } catch (\SoapFault $e) {
+            $this->assertContains(
+                $expectedMessage,
+                $e->getMessage(),
+                'SoapFault does not contain expected message.'
+            );
+        } catch (\Exception $e) {
+            $errorObj = $this->processRestExceptionResult($e);
+            $this->assertEquals($expectedMessage, $errorObj['message']);
+            $this->assertEquals([$attributeId], $errorObj['parameters']);
+        }
     }
 
     /**
@@ -143,7 +156,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $productSku . '/options',
-                'httpMethod' => Config::HTTP_METHOD_POST
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -164,7 +177,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
             ],
         ];
         /** @var int $result */
-        $result = $this->_webApiCall($serviceInfo, ['productSku' => $productSku, 'option' => $option]);
+        $result = $this->_webApiCall($serviceInfo, ['sku' => $productSku, 'option' => $option]);
         $this->assertGreaterThan(0, $result);
     }
 
@@ -179,7 +192,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $productSku . '/options' . '/' . $optionId,
-                'httpMethod' => Config::HTTP_METHOD_PUT
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_PUT
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -194,7 +207,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
 
         $requestBody = ['option' => $option];
         if (TESTS_WEB_API_ADAPTER == self::ADAPTER_SOAP) {
-            $requestBody['productSku'] = $productSku;
+            $requestBody['sku'] = $productSku;
             $requestBody['option']['id'] = $optionId;
         }
 
@@ -213,7 +226,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $productSku . '/options/all',
-                'httpMethod' => Config::HTTP_METHOD_GET
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -221,7 +234,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
                 'operation' => self::SERVICE_NAME . 'GetList'
             ]
         ];
-        return $this->_webApiCall($serviceInfo, ['productSku' => $productSku]);
+        return $this->_webApiCall($serviceInfo, ['sku' => $productSku]);
     }
 
     /**
@@ -234,7 +247,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $productSku . '/options/' . $optionId,
-                'httpMethod' => Config::HTTP_METHOD_DELETE
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_DELETE
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -242,7 +255,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
                 'operation' => self::SERVICE_NAME . 'DeleteById'
             ]
         ];
-        return $this->_webApiCall($serviceInfo, ['productSku' => $productSku, 'optionId' => $optionId]);
+        return $this->_webApiCall($serviceInfo, ['sku' => $productSku, 'id' => $optionId]);
     }
 
     /**
@@ -255,7 +268,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $productSku . '/options/' . $optionId,
-                'httpMethod'   => Config::HTTP_METHOD_GET
+                'httpMethod'   => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET
             ],
             'soap' => [
                 'service'        => self::SERVICE_NAME,
@@ -263,7 +276,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
                 'operation'      => self::SERVICE_NAME . 'Get'
             ]
         ];
-        return $this->_webApiCall($serviceInfo, ['productSku' => $productSku, 'optionId' => $optionId]);
+        return $this->_webApiCall($serviceInfo, ['sku' => $productSku, 'id' => $optionId]);
     }
 
     /**
@@ -275,7 +288,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $productSku . '/options/all',
-                'httpMethod'   => Config::HTTP_METHOD_GET
+                'httpMethod'   => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET
             ],
             'soap' => [
                 'service'        => self::SERVICE_NAME,
@@ -283,7 +296,6 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
                 'operation'      => self::SERVICE_NAME . 'GetList'
             ]
         ];
-        return $this->_webApiCall($serviceInfo, ['productSku' => $productSku]);
+        return $this->_webApiCall($serviceInfo, ['sku' => $productSku]);
     }
-
 }

@@ -1,34 +1,35 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\TestModuleMSC\Model;
 
-use Magento\TestModuleMSC\Api\Data\CustomAttributeDataObjectDataBuilder;
-use Magento\TestModuleMSC\Api\Data\ItemDataBuilder;
+use Magento\TestModuleMSC\Api\Data\CustomAttributeDataObjectInterfaceFactory;
+use Magento\TestModuleMSC\Api\Data\ItemInterfaceFactory;
 
 class AllSoapAndRest implements \Magento\TestModuleMSC\Api\AllSoapAndRestInterface
 {
     /**
-     * @var ItemDataBuilder
+     * @var ItemInterfaceFactory
      */
-    protected $itemDataBuilder;
+    protected $itemDataFactory;
 
     /**
-     * @var CustomAttributeDataObjectDataBuilder
+     * @var CustomAttributeDataObjectInterfaceFactory
      */
-    protected $customAttributeDataObjectDataBuilder;
+    protected $customAttributeDataObjectDataFactory;
 
     /**
-     * @param ItemDataBuilder $itemDataBuilder
-     * @param CustomAttributeDataObjectDataBuilder $customAttributeNestedDataObjectBuilder
+     * @param ItemInterfaceFactory $itemDataFactory
+     * @param CustomAttributeDataObjectInterfaceFactory $customAttributeNestedDataObjectFactory
      */
     public function __construct(
-        ItemDataBuilder $itemDataBuilder,
-        CustomAttributeDataObjectDataBuilder $customAttributeNestedDataObjectBuilder
+        ItemInterfaceFactory $itemDataFactory,
+        CustomAttributeDataObjectInterfaceFactory $customAttributeNestedDataObjectFactory
     ) {
-        $this->itemDataBuilder = $itemDataBuilder;
-        $this->customAttributeDataObjectDataBuilder = $customAttributeNestedDataObjectBuilder;
+        $this->itemDataFactory = $itemDataFactory;
+        $this->customAttributeDataObjectDataFactory = $customAttributeNestedDataObjectFactory;
     }
 
     /**
@@ -36,7 +37,7 @@ class AllSoapAndRest implements \Magento\TestModuleMSC\Api\AllSoapAndRestInterfa
      */
     public function item($itemId)
     {
-        return $this->itemDataBuilder->setItemId($itemId)->setName('testProduct1')->create();
+        return $this->itemDataFactory->create()->setItemId($itemId)->setName('testProduct1');
     }
 
     /**
@@ -44,8 +45,8 @@ class AllSoapAndRest implements \Magento\TestModuleMSC\Api\AllSoapAndRestInterfa
      */
     public function items()
     {
-        $result1 = $this->itemDataBuilder->setItemId(1)->setName('testProduct1')->create();
-        $result2 = $this->itemDataBuilder->setItemId(2)->setName('testProduct2')->create();
+        $result1 = $this->itemDataFactory->create()->setItemId(1)->setName('testProduct1');
+        $result2 = $this->itemDataFactory->create()->setItemId(2)->setName('testProduct2');
 
         return [$result1, $result2];
     }
@@ -55,7 +56,7 @@ class AllSoapAndRest implements \Magento\TestModuleMSC\Api\AllSoapAndRestInterfa
      */
     public function create($name)
     {
-        return $this->itemDataBuilder->setItemId(rand())->setName($name)->create();
+        return $this->itemDataFactory->create()->setItemId(rand())->setName($name);
     }
 
     /**
@@ -63,17 +64,16 @@ class AllSoapAndRest implements \Magento\TestModuleMSC\Api\AllSoapAndRestInterfa
      */
     public function update(\Magento\TestModuleMSC\Api\Data\ItemInterface $entityItem)
     {
-        return $this->itemDataBuilder->setItemId($entityItem->getItemId())
-            ->setName('Updated' . $entityItem->getName())
-            ->create();
+        return $this->itemDataFactory->create()->setItemId($entityItem->getItemId())
+            ->setName('Updated' . $entityItem->getName());
     }
 
     public function testOptionalParam($name = null)
     {
-        if (is_null($name)) {
-            return $this->itemDataBuilder->setItemId(3)->setName('No Name')->create();
+        if ($name === null) {
+            return $this->itemDataFactory->create()->setItemId(3)->setName('No Name');
         } else {
-            return $this->itemDataBuilder->setItemId(3)->setName($name)->create();
+            return $this->itemDataFactory->create()->setItemId(3)->setName($name);
         }
     }
 
@@ -90,17 +90,15 @@ class AllSoapAndRest implements \Magento\TestModuleMSC\Api\AllSoapAndRestInterfa
      */
     public function getPreconfiguredItem()
     {
-        $customAttributeDataObject = $this->customAttributeDataObjectDataBuilder
+        $customAttributeDataObject = $this->customAttributeDataObjectDataFactory->create()
             ->setName('nameValue')
-            ->setCustomAttribute('custom_attribute_int', 1)
-            ->create();
+            ->setCustomAttribute('custom_attribute_int', 1);
 
-        $item = $this->itemDataBuilder
+        $item = $this->itemDataFactory->create()
             ->setItemId(1)
             ->setName('testProductAnyType')
             ->setCustomAttribute('custom_attribute_data_object', $customAttributeDataObject)
-            ->setCustomAttribute('custom_attribute_string', 'someStringValue')
-            ->create();
+            ->setCustomAttribute('custom_attribute_string', 'someStringValue');
 
         return $item;
     }

@@ -1,8 +1,11 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Persistent\Model\Layout;
+
+use Magento\PageCache\Model\DepersonalizeChecker;
 
 /**
  * Class DepersonalizePlugin
@@ -10,43 +13,27 @@ namespace Magento\Persistent\Model\Layout;
 class DepersonalizePlugin
 {
     /**
+     * @var DepersonalizeChecker
+     */
+    protected $depersonalizeChecker;
+
+    /**
      * @var \Magento\Persistent\Model\Session
      */
     protected $persistentSession;
 
     /**
-     * @var \Magento\Framework\App\RequestInterface
-     */
-    protected $request;
-
-    /**
-     * @var \Magento\Framework\Module\Manager
-     */
-    protected $moduleManager;
-
-    /**
-     * @var \Magento\PageCache\Model\Config
-     */
-    protected $cacheConfig;
-
-    /**
      * Constructor
      *
+     * @param DepersonalizeChecker $depersonalizeChecker
      * @param \Magento\Persistent\Model\Session $persistentSession
-     * @param \Magento\Framework\App\RequestInterface $request
-     * @param \Magento\Framework\Module\Manager $moduleManager
-     * @param \Magento\PageCache\Model\Config $cacheConfig
      */
     public function __construct(
-        \Magento\Persistent\Model\Session $persistentSession,
-        \Magento\Framework\App\RequestInterface $request,
-        \Magento\Framework\Module\Manager $moduleManager,
-        \Magento\PageCache\Model\Config $cacheConfig
+        DepersonalizeChecker $depersonalizeChecker,
+        \Magento\Persistent\Model\Session $persistentSession
     ) {
         $this->persistentSession = $persistentSession;
-        $this->request = $request;
-        $this->moduleManager = $moduleManager;
-        $this->cacheConfig = $cacheConfig;
+        $this->depersonalizeChecker = $depersonalizeChecker;
     }
 
     /**
@@ -60,11 +47,7 @@ class DepersonalizePlugin
         \Magento\Framework\View\LayoutInterface $subject,
         \Magento\Framework\View\LayoutInterface $result
     ) {
-        if ($this->moduleManager->isEnabled('Magento_PageCache')
-            && $this->cacheConfig->isEnabled()
-            && !$this->request->isAjax()
-            && $subject->isCacheable()
-        ) {
+        if ($this->depersonalizeChecker->checkIfDepersonalize($subject)) {
             $this->persistentSession->setCustomerId(null);
         }
 

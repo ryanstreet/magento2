@@ -1,7 +1,8 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Controller\Cart;
 
@@ -10,7 +11,7 @@ class Delete extends \Magento\Checkout\Controller\Cart
     /**
      * Delete shopping cart item action
      *
-     * @return void
+     * @return \Magento\Framework\Controller\Result\Redirect
      */
     public function execute()
     {
@@ -24,6 +25,6 @@ class Delete extends \Magento\Checkout\Controller\Cart
             }
         }
         $defaultUrl = $this->_objectManager->create('Magento\Framework\UrlInterface')->getUrl('*/*');
-        $this->getResponse()->setRedirect($this->_redirect->getRedirectUrl($defaultUrl));
+        return $this->resultRedirectFactory->create()->setUrl($this->_redirect->getRedirectUrl($defaultUrl));
     }
 }

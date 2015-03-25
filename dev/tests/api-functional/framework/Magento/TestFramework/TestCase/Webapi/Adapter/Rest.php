@@ -2,13 +2,15 @@
 /**
  * Test client for REST API testing.
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\TestFramework\TestCase\Webapi\Adapter;
 
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\Webapi\Model\Rest\Config;
+use Magento\Framework\Webapi\Rest\Request;
+use Magento\TestFramework\Authentication\OauthHelper;
 
 class Rest implements \Magento\TestFramework\TestCase\Webapi\AdapterInterface
 {
@@ -59,14 +61,17 @@ class Rest implements \Magento\TestFramework\TestCase\Webapi\AdapterInterface
 
     /**
      * {@inheritdoc}
-     * @throws \Exception
+     * @throws \LogicException
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function call($serviceInfo, $arguments = [])
+    public function call($serviceInfo, $arguments = [], $storeCode = null, $integration = null)
     {
-        $resourcePath = '/' . $this->defaultStoreCode . $this->_getRestResourcePath($serviceInfo);
+        $storeCode = $storeCode !== null ? (string)$storeCode : $this->defaultStoreCode;
+        $resourcePath = '/' . $storeCode . $this->_getRestResourcePath($serviceInfo);
         $httpMethod = $this->_getRestHttpMethod($serviceInfo);
         //Get a valid token
-        $accessCredentials = \Magento\TestFramework\Authentication\OauthHelper::getApiAccessCredentials();
+        $accessCredentials = OauthHelper::getApiAccessCredentials(null, $integration);
         /** @var $oAuthClient \Magento\TestFramework\Authentication\Rest\OauthClient */
         $oAuthClient = $accessCredentials['oauth_client'];
         $urlFormEncoded = false;
@@ -86,16 +91,16 @@ class Rest implements \Magento\TestFramework\TestCase\Webapi\AdapterInterface
         }
         $authHeader = array_merge($authHeader, ['Accept: application/json', 'Content-Type: application/json']);
         switch ($httpMethod) {
-            case Config::HTTP_METHOD_GET:
+            case Request::HTTP_METHOD_GET:
                 $response = $this->curlClient->get($resourcePath, [], $authHeader);
                 break;
-            case Config::HTTP_METHOD_POST:
+            case Request::HTTP_METHOD_POST:
                 $response = $this->curlClient->post($resourcePath, $arguments, $authHeader);
                 break;
-            case Config::HTTP_METHOD_PUT:
+            case Request::HTTP_METHOD_PUT:
                 $response = $this->curlClient->put($resourcePath, $arguments, $authHeader);
                 break;
-            case Config::HTTP_METHOD_DELETE:
+            case Request::HTTP_METHOD_DELETE:
                 $response = $this->curlClient->delete($resourcePath, $authHeader);
                 break;
             default:

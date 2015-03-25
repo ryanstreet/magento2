@@ -1,17 +1,16 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Api;
-
-use Magento\Webapi\Model\Rest\Config;
 
 class ProductOptionTypeListTest extends \Magento\TestFramework\TestCase\WebapiAbstract
 {
     const SERVICE_READ_NAME = 'bundleProductOptionTypeListV1';
     const SERVICE_VERSION = 'V1';
-    const RESOURCE_PATH = '/V1/bundle-products/option/types';
+    const RESOURCE_PATH = '/V1/bundle-products/options/types';
 
     public function testGetTypes()
     {
@@ -34,7 +33,7 @@ class ProductOptionTypeListTest extends \Magento\TestFramework\TestCase\WebapiAb
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH,
-                'httpMethod' => Config::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
             'soap' => [
                 'service' => self::SERVICE_READ_NAME,

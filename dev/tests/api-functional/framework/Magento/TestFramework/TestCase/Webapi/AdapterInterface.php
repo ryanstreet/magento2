@@ -2,7 +2,8 @@
 /**
  * API tests adapter interface.
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\TestFramework\TestCase\Webapi;
 
@@ -31,7 +32,9 @@ interface AdapterInterface
      * );
      * </pre>
      * @param array $arguments
+     * @param string|null $storeCode if store code not provided, default store code will be used
+     * @param \Magento\Integration\Model\Integration|null $integration
      * @return array|string|int|float|bool
      */
-    public function call($serviceInfo, $arguments = []);
+    public function call($serviceInfo, $arguments = [], $storeCode = null, $integration = null);
 }

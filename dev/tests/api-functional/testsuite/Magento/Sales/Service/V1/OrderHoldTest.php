@@ -1,12 +1,12 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\Sales\Service\V1;
 
 use Magento\TestFramework\TestCase\WebapiAbstract;
-use Magento\Webapi\Model\Rest\Config as RestConfig;
 
 class OrderHoldTest extends WebapiAbstract
 {
@@ -23,8 +23,8 @@ class OrderHoldTest extends WebapiAbstract
         $order = $objectManager->get('Magento\Sales\Model\Order')->loadByIncrementId('100000001');
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => '/V1/order/' . $order->getId() . '/hold',
-                'httpMethod' => RestConfig::HTTP_METHOD_POST,
+                'resourcePath' => '/V1/orders/' . $order->getId() . '/hold',
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,

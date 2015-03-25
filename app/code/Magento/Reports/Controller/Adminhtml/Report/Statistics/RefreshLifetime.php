@@ -1,7 +1,8 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Reports\Controller\Adminhtml\Report\Statistics;
 
@@ -21,7 +22,7 @@ class RefreshLifetime extends \Magento\Reports\Controller\Adminhtml\Report\Stati
                 $this->_objectManager->create($collectionName)->aggregate();
             }
             $this->messageManager->addSuccess(__('We updated lifetime statistics.'));
-        } catch (\Magento\Framework\Model\Exception $e) {
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $this->messageManager->addError($e->getMessage());
         } catch (\Exception $e) {
             $this->messageManager->addError(__('We can\'t refresh lifetime statistics.'));

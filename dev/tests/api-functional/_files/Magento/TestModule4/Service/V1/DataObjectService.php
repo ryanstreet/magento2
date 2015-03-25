@@ -1,27 +1,28 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\TestModule4\Service\V1;
 
 use Magento\TestModule4\Service\V1\Entity\DataObjectRequest;
-use Magento\TestModule4\Service\V1\Entity\DataObjectResponseBuilder;
+use Magento\TestModule4\Service\V1\Entity\DataObjectResponseFactory;
 use Magento\TestModule4\Service\V1\Entity\ExtensibleRequestInterface;
 use Magento\TestModule4\Service\V1\Entity\NestedDataObjectRequest;
 
 class DataObjectService implements \Magento\TestModule4\Service\V1\DataObjectServiceInterface
 {
     /**
-     * @var DataObjectResponseBuilder
+     * @var DataObjectResponseFactory
      */
-    protected $responseBuilder;
+    protected $responseFactory;
 
     /**
-     * @param DataObjectResponseBuilder $responseBuilder
+     * @param DataObjectResponseFactory $responseFactory
      */
-    public function __construct(DataObjectResponseBuilder $responseBuilder)
+    public function __construct(DataObjectResponseFactory $responseFactory)
     {
-        $this->responseBuilder = $responseBuilder;
+        $this->responseFactory = $responseFactory;
     }
 
     /**
@@ -29,7 +30,7 @@ class DataObjectService implements \Magento\TestModule4\Service\V1\DataObjectSer
      */
     public function getData($id)
     {
-        return $this->responseBuilder->setEntityId($id)->setName("Test")->create();
+        return $this->responseFactory->create()->setEntityId($id)->setName("Test");
     }
 
     /**
@@ -37,7 +38,7 @@ class DataObjectService implements \Magento\TestModule4\Service\V1\DataObjectSer
      */
     public function updateData($id, DataObjectRequest $request)
     {
-        return $this->responseBuilder->setEntityId($id)->setName($request->getName())->create();
+        return $this->responseFactory->create()->setEntityId($id)->setName($request->getName());
     }
 
     /**
@@ -45,7 +46,7 @@ class DataObjectService implements \Magento\TestModule4\Service\V1\DataObjectSer
      */
     public function nestedData($id, NestedDataObjectRequest $request)
     {
-        return $this->responseBuilder->setEntityId($id)->setName($request->getDetails()->getName())->create();
+        return $this->responseFactory->create()->setEntityId($id)->setName($request->getDetails()->getName());
     }
 
     /**
@@ -64,6 +65,6 @@ class DataObjectService implements \Magento\TestModule4\Service\V1\DataObjectSer
      */
     public function extensibleDataObject($id, ExtensibleRequestInterface $request)
     {
-        return $this->responseBuilder->setEntityId($id)->setName($request->getName())->create();
+        return $this->responseFactory->create()->setEntityId($id)->setName($request->getName());
     }
 }

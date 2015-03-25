@@ -1,14 +1,19 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Wishlist\Controller\Index;
 
 use Magento\Framework\App\Action;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Wishlist\Controller\IndexInterface;
+use Magento\Catalog\Model\Product\Exception as ProductException;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class Cart extends Action\Action implements IndexInterface
 {
     /**
@@ -91,6 +96,8 @@ class Cart extends Action\Action implements IndexInterface
      * to product view page with message about needed defined required options
      *
      * @return ResponseInterface
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function execute()
     {
@@ -160,16 +167,11 @@ class Cart extends Action\Action implements IndexInterface
                     $redirectUrl = $refererUrl;
                 }
             }
-        } catch (\Magento\Framework\Model\Exception $e) {
-            if ($e->getCode() == \Magento\Wishlist\Model\Item::EXCEPTION_CODE_NOT_SALABLE) {
-                $this->messageManager->addError(__('This product(s) is out of stock.'));
-            } elseif ($e->getCode() == \Magento\Wishlist\Model\Item::EXCEPTION_CODE_HAS_REQUIRED_OPTIONS) {
-                $this->messageManager->addNotice($e->getMessage());
-                $redirectUrl = $configureUrl;
-            } else {
-                $this->messageManager->addNotice($e->getMessage());
-                $redirectUrl = $configureUrl;
-            }
+        } catch (ProductException $e) {
+            $this->messageManager->addError(__('This product(s) is out of stock.'));
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            $this->messageManager->addNotice($e->getMessage());
+            $redirectUrl = $configureUrl;
         } catch (\Exception $e) {
             $this->messageManager->addException($e, __('Cannot add item to shopping cart'));
         }

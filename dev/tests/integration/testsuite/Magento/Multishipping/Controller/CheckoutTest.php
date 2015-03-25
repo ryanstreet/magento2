@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Multishipping\Controller;
 
@@ -23,8 +24,8 @@ class CheckoutTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testOverviewAction()
     {
-        /** @var $quote \Magento\Sales\Model\Quote */
-        $quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Sales\Model\Quote');
+        /** @var $quote \Magento\Quote\Model\Quote */
+        $quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Quote\Model\Quote');
         $quote->load('test01', 'reserved_order_id');
 
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Checkout\Model\Session')
@@ -42,7 +43,7 @@ class CheckoutTest extends \Magento\TestFramework\TestCase\AbstractController
         $customer = $service->authenticate('customer@example.com', 'password');
 
         $session->setCustomerDataAsLoggedIn($customer);
-        $this->getRequest()->setPost('payment', ['method' => 'checkmo']);
+        $this->getRequest()->setPostValue('payment', ['method' => 'checkmo']);
         $this->dispatch('multishipping/checkout/overview');
         $html = $this->getResponse()->getBody();
         $this->assertContains('<div class="box box-billing-method">', $html);

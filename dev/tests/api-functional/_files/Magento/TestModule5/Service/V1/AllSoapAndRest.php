@@ -1,24 +1,25 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\TestModule5\Service\V1;
 
-use Magento\TestModule5\Service\V1\Entity\AllSoapAndRestBuilder;
+use Magento\TestModule5\Service\V1\Entity\AllSoapAndRestFactory;
 
 class AllSoapAndRest implements \Magento\TestModule5\Service\V1\AllSoapAndRestInterface
 {
     /**
-     * @var AllSoapAndRestBuilder
+     * @var AllSoapAndRestFactory
      */
-    protected $builder;
+    protected $factory;
 
     /**
-     * @param AllSoapAndRestBuilder $builder
+     * @param AllSoapAndRestFactory $factory
      */
-    public function __construct(AllSoapAndRestBuilder $builder)
+    public function __construct(AllSoapAndRestFactory $factory)
     {
-        $this->builder = $builder;
+        $this->factory = $factory;
     }
 
     /**
@@ -26,12 +27,11 @@ class AllSoapAndRest implements \Magento\TestModule5\Service\V1\AllSoapAndRestIn
      */
     public function item($entityId)
     {
-        return $this->builder
+        return $this->factory->create()
             ->setEntityId($entityId)
             ->setName('testItemName')
             ->setIsEnabled(true)
-            ->setHasOrders(true)
-            ->create();
+            ->setHasOrders(true);
     }
 
     /**
@@ -39,8 +39,8 @@ class AllSoapAndRest implements \Magento\TestModule5\Service\V1\AllSoapAndRestIn
      */
     public function items()
     {
-        $allSoapAndRest1 = $this->builder->setEntityId(1)->setName('testProduct1')->create();
-        $allSoapAndRest2 = $this->builder->setEntityId(2)->setName('testProduct2')->create();
+        $allSoapAndRest1 = $this->factory->create()->setEntityId(1)->setName('testProduct1');
+        $allSoapAndRest2 = $this->factory->create()->setEntityId(2)->setName('testProduct2');
         return [$allSoapAndRest1, $allSoapAndRest2];
     }
 
@@ -49,7 +49,11 @@ class AllSoapAndRest implements \Magento\TestModule5\Service\V1\AllSoapAndRestIn
      */
     public function create(\Magento\TestModule5\Service\V1\Entity\AllSoapAndRest $item)
     {
-        return $this->builder->populate($item)->create();
+        return $this->factory->create()
+            ->setEntityId($item->getEntityId())
+            ->setName($item->getName())
+            ->setIsEnabled($item->isEnabled())
+            ->setHasOrders($item->hasOrders());
     }
 
     /**

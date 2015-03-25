@@ -2,13 +2,15 @@
 /**
  * RSS Backend Authentication plugin
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Rss\App\Action\Plugin;
 
 use Magento\Backend\App\AbstractAction;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Exception\AuthenticationException;
 
 /**
  * Class BackendAuthentication
@@ -98,7 +100,7 @@ class BackendAuthentication extends \Magento\Backend\App\Action\Plugin\Authentic
             list($login, $password) = $this->httpAuthentication->getCredentials();
             try {
                 $this->_auth->login($login, $password);
-            } catch (\Magento\Backend\Model\Auth\Exception $e) {
+            } catch (AuthenticationException $e) {
                 $this->logger->critical($e);
             }
         }

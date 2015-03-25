@@ -2,11 +2,10 @@
 /**
  * Interface for a test service for error handling testing
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\TestModule3\Service\V1;
-
-use Magento\TestModule3\Service\V1\Entity\Parameter;
 
 interface ErrorInterface
 {
@@ -24,12 +23,6 @@ interface ErrorInterface
      * @return int Status
      */
     public function serviceException();
-
-    /**
-     * @param \Magento\TestModule3\Service\V1\Entity\Parameter[] $parameters
-     * @return int Status
-     */
-    public function parameterizedServiceException($parameters);
 
     /**
      * @return int Status

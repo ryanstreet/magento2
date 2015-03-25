@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\TestModule4\Service\V1\Entity;
 
@@ -12,5 +13,14 @@ class NestedDataObjectRequest extends \Magento\Framework\Api\AbstractExtensibleO
     public function getDetails()
     {
         return $this->_get('details');
+    }
+
+    /**
+     * @param \Magento\TestModule4\Service\V1\Entity\DataObjectRequest $details
+     * @return $this
+     */
+    public function setDetails(\Magento\TestModule4\Service\V1\Entity\DataObjectRequest $details = null)
+    {
+        return $this->setData('details', $details);
     }
 }

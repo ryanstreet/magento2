@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Model\Indexer\Stock\Action;
 
@@ -22,6 +23,7 @@ class RowTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @magentoDbIsolation disabled
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      */
     public function testProductUpdate()
@@ -34,9 +36,9 @@ class RowTest extends \PHPUnit_Framework_TestCase
             'Magento\Catalog\Block\Product\ListProduct'
         );
 
-        /** @var \Magento\CatalogInventory\Api\Data\StockItemInterfaceBuilder $stockItemBuilder */
-        $stockItemBuilder = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\CatalogInventory\Api\Data\StockItemInterfaceBuilder'
+        /** @var \Magento\Framework\Api\DataObjectHelper $dataObjectHelper */
+        $dataObjectHelper = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+            '\Magento\Framework\Api\DataObjectHelper'
         );
 
         /** @var \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry */
@@ -59,9 +61,12 @@ class RowTest extends \PHPUnit_Framework_TestCase
             'qty' => $stockItem->getQty() + 11,
         ];
 
-        $stockItemBuilder = $stockItemBuilder->mergeDataObjectWithArray($stockItem, $stockItemData);
-        $stockItemSave = $stockItemBuilder->create();
-        $stockItemRepository->save($stockItemSave);
+        $dataObjectHelper->populateWithArray(
+            $stockItem,
+            $stockItemData,
+            '\Magento\CatalogInventory\Api\Data\StockItemInterface'
+        );
+        $stockItemRepository->save($stockItem);
 
         $category = $categoryFactory->create()->load(2);
         $layer = $listProduct->getLayer();

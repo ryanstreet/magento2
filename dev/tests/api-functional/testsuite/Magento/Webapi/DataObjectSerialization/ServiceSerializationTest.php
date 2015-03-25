@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Webapi\DataObjectSerialization;
 
@@ -33,7 +34,7 @@ class ServiceSerializationTest extends \Magento\TestFramework\TestCase\WebapiAbs
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => $this->_restResourcePath . $itemId,
-                'httpMethod' => \Magento\Webapi\Model\Rest\Config::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
         ];
         $item = $this->_webApiCall($serviceInfo, []);
@@ -51,7 +52,7 @@ class ServiceSerializationTest extends \Magento\TestFramework\TestCase\WebapiAbs
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => $this->_restResourcePath . $itemId,
-                'httpMethod' => \Magento\Webapi\Model\Rest\Config::HTTP_METHOD_POST,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST,
             ],
         ];
         $item = $this->_webApiCall($serviceInfo, ['request' => ['name' => $name]]);
@@ -69,7 +70,7 @@ class ServiceSerializationTest extends \Magento\TestFramework\TestCase\WebapiAbs
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => $this->_restResourcePath . $itemId . '/nested',
-                'httpMethod' => \Magento\Webapi\Model\Rest\Config::HTTP_METHOD_POST,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST,
             ],
         ];
         $item = $this->_webApiCall($serviceInfo, ['request' => ['details' => ['name' => $name]]]);
@@ -83,7 +84,7 @@ class ServiceSerializationTest extends \Magento\TestFramework\TestCase\WebapiAbs
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => "{$this->_restResourcePath}scalar/{$id}",
-                'httpMethod' => \Magento\Webapi\Model\Rest\Config::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
         ];
         $this->assertEquals($id, $this->_webApiCall($serviceInfo), 'Scalar service output is serialized incorrectly.');
@@ -95,7 +96,7 @@ class ServiceSerializationTest extends \Magento\TestFramework\TestCase\WebapiAbs
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => "{$this->_restResourcePath}extensibleDataObject/{$id}",
-                'httpMethod' => \Magento\Webapi\Model\Rest\Config::HTTP_METHOD_POST,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST,
             ],
         ];
 

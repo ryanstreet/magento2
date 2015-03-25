@@ -1,11 +1,11 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Api;
 
 use Magento\TestFramework\TestCase\WebapiAbstract;
-use Magento\Webapi\Model\Rest\Config as RestConfig;
 
 /**
  * Class LowStockItemsTest
@@ -13,7 +13,7 @@ use Magento\Webapi\Model\Rest\Config as RestConfig;
 class LowStockItemsTest extends WebapiAbstract
 {
     const SERVICE_VERSION = 'V1';
-    const RESOURCE_PATH = '/V1/stockItem/lowStock/';
+    const RESOURCE_PATH = '/V1/stockItems/lowStock/';
 
     /**
      * @param float $qty
@@ -22,6 +22,7 @@ class LowStockItemsTest extends WebapiAbstract
      * @param array $result
      * @magentoApiDataFixture Magento/Catalog/_files/multiple_products.php
      * @dataProvider getLowStockItemsDataProvider
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function testGetLowStockItems($qty, $currentPage, $pageSize, $result)
     {
@@ -29,7 +30,7 @@ class LowStockItemsTest extends WebapiAbstract
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '?' . http_build_query($requestData),
-                'httpMethod' => RestConfig::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
             'soap' => [
                 'service' => 'catalogInventoryStockRegistryV1',

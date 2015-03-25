@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Model;
 
@@ -45,7 +46,7 @@ class Menu extends \ArrayObject
      */
     public function add(\Magento\Backend\Model\Menu\Item $item, $parentId = null, $index = null)
     {
-        if (!is_null($parentId)) {
+        if ($parentId !== null) {
             $parentItem = $this->get($parentId);
             if ($parentItem === null) {
                 throw new \InvalidArgumentException("Item with identifier {$parentId} does not exist");
@@ -181,7 +182,7 @@ class Menu extends \ArrayObject
             if ($item->isAllowed() && !$item->isDisabled()) {
                 if ($item->hasChildren()) {
                     $result = $item->getChildren()->getFirstAvailable();
-                    if (false == is_null($result)) {
+                    if (false == ($result === null)) {
                         break;
                     }
                 } else {

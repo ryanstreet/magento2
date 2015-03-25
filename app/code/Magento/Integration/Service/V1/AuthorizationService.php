@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\Integration\Service\V1;
@@ -102,7 +103,9 @@ class AuthorizationService implements AuthorizationServiceInterface
             $this->_associateResourcesWithRole($role, $resources);
         } catch (\Exception $e) {
             $this->_logger->critical($e);
-            throw new LocalizedException('Error happened while granting permissions. Check exception log for details.');
+            throw new LocalizedException(
+                __('Error happened while granting permissions. Check exception log for details.')
+            );
         }
     }
 
@@ -124,7 +127,7 @@ class AuthorizationService implements AuthorizationServiceInterface
         } catch (\Exception $e) {
             $this->_logger->critical($e);
             throw new LocalizedException(
-                'Error happened while deleting role and permissions. Check exception log for details.'
+                __('Error happened while deleting role and permissions. Check exception log for details.')
             );
         }
     }

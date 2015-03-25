@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Controller;
 
@@ -62,9 +63,9 @@ class AddressTest extends \Magento\TestFramework\TestCase\AbstractController
         $this->getRequest()->setParam(
             'id',
             2
-        )->setServer(
-            ['REQUEST_METHOD' => 'POST']
-        )->setPost(
+        )->setMethod(
+            'POST'
+        )->setPostValue(
             [
                 'form_key' => $this->_objectManager->get('Magento\Framework\Data\Form\FormKey')->getFormKey(),
                 'firstname' => 'James',
@@ -109,9 +110,9 @@ class AddressTest extends \Magento\TestFramework\TestCase\AbstractController
         $this->getRequest()->setParam(
             'id',
             1
-        )->setServer(
-            ['REQUEST_METHOD' => 'POST']
-        )->setPost(
+        )->setMethod(
+            'POST'
+        )->setPostValue(
             [
                 'form_key' => $this->_objectManager->get('Magento\Framework\Data\Form\FormKey')->getFormKey(),
                 'firstname' => 'James',

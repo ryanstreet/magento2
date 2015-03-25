@@ -1,10 +1,14 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
+
 namespace Magento\Fedex\Model;
 
-use Magento\Sales\Model\Quote\Address\RateRequest;
+use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
 use Magento\Shipping\Model\Rate\Result;
 
@@ -12,6 +16,8 @@ use Magento\Shipping\Model\Rate\Result;
  * Fedex shipping implementation
  *
  * @author     Magento Core Team <core@magentocommerce.com>
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\Carrier\CarrierInterface
 {
@@ -113,11 +119,11 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
 
     /**
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Sales\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory
+     * @param \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Shipping\Model\Simplexml\ElementFactory $xmlElFactory
      * @param \Magento\Shipping\Model\Rate\ResultFactory $rateFactory
-     * @param \Magento\Sales\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory
+     * @param \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory
      * @param \Magento\Shipping\Model\Tracking\ResultFactory $trackFactory
      * @param \Magento\Shipping\Model\Tracking\Result\ErrorFactory $trackErrorFactory
      * @param \Magento\Shipping\Model\Tracking\Result\StatusFactory $trackStatusFactory
@@ -135,11 +141,11 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Sales\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory,
+        \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Shipping\Model\Simplexml\ElementFactory $xmlElFactory,
         \Magento\Shipping\Model\Rate\ResultFactory $rateFactory,
-        \Magento\Sales\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory,
+        \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory,
         \Magento\Shipping\Model\Tracking\ResultFactory $trackFactory,
         \Magento\Shipping\Model\Tracking\Result\ErrorFactory $trackErrorFactory,
         \Magento\Shipping\Model\Tracking\Result\StatusFactory $trackStatusFactory,
@@ -252,6 +258,8 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      *
      * @param RateRequest $request
      * @return $this
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function setRequest(RateRequest $request)
     {
@@ -492,6 +500,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      *
      * @param mixed $response
      * @return Result
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function _prepareRateResponse($response)
     {
@@ -689,6 +698,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      *
      * @param mixed $response
      * @return Result
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function _parseXmlResponse($response)
     {
@@ -696,7 +706,8 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
         $priceArr = [];
 
         if (strlen(trim($response)) > 0) {
-            if ($xml = $this->_parseXml($response)) {
+            $xml = $this->parseXml($response, 'Magento\Shipping\Model\Simplexml\Element');
+            if (is_object($xml)) {
                 if (is_object($xml->Error) && is_object($xml->Error->Message)) {
                     $errorTitle = (string)$xml->Error->Message;
                 } elseif (is_object($xml->SoftError) && is_object($xml->SoftError->Message)) {
@@ -751,32 +762,12 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
     }
 
     /**
-     * Parse XML string and return XML document object or false
-     *
-     * @param string $xmlContent
-     * @return \Magento\Shipping\Model\Simplexml\Element|bool
-     * @throws \Exception
-     */
-    protected function _parseXml($xmlContent)
-    {
-        try {
-            try {
-                return simplexml_load_string($xmlContent);
-            } catch (\Exception $e) {
-                throw new \Exception(__('Failed to parse xml document: %1', $xmlContent));
-            }
-        } catch (\Exception $e) {
-            $this->_logger->critical($e);
-            return false;
-        }
-    }
-
-    /**
      * Get configuration data of carrier
      *
      * @param string $type
      * @param string $code
      * @return array|false
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function getCode($type, $code = '')
     {
@@ -1047,6 +1038,9 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      * @param string[] $trackingValue
      * @param \stdClass $response
      * @return void
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function _parseTrackingResponse($trackingValue, $response)
     {
@@ -1222,6 +1216,9 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      *
      * @param \Magento\Framework\Object $request
      * @return array
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function _formShipmentRequest(\Magento\Framework\Object $request)
     {
@@ -1451,6 +1448,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      *
      * @param \Magento\Framework\Object|null $params
      * @return array|bool
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function getContainerTypes(\Magento\Framework\Object $params = null)
     {
@@ -1515,6 +1513,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      *
      * @param \Magento\Framework\Object|null $params
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getDeliveryConfirmationTypes(\Magento\Framework\Object $params = null)
     {

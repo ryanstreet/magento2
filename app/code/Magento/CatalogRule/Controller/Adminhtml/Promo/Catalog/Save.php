@@ -1,27 +1,29 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog;
 
-use Magento\Framework\Model\Exception;
+use Magento\Framework\Exception\LocalizedException;
 
 class Save extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
 {
     /**
      * @return void
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function execute()
     {
-        if ($this->getRequest()->getPost()) {
+        if ($this->getRequest()->getPostValue()) {
             try {
                 $model = $this->_objectManager->create('Magento\CatalogRule\Model\Rule');
                 $this->_eventManager->dispatch(
                     'adminhtml_controller_catalogrule_prepare_save',
                     ['request' => $this->getRequest()]
                 );
-                $data = $this->getRequest()->getPost();
+                $data = $this->getRequest()->getPostValue();
                 $inputFilter = new \Zend_Filter_Input(
                     ['from_date' => $this->_dateFilter, 'to_date' => $this->_dateFilter],
                     [],
@@ -32,7 +34,7 @@ class Save extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
                 if ($id) {
                     $model->load($id);
                     if ($id != $model->getId()) {
-                        throw new Exception(__('Wrong rule specified.'));
+                        throw new LocalizedException(__('Wrong rule specified.'));
                     }
                 }
 
@@ -69,7 +71,7 @@ class Save extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
                     $this->_redirect('catalog_rule/*/');
                 }
                 return;
-            } catch (Exception $e) {
+            } catch (LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
                 $this->messageManager->addError(

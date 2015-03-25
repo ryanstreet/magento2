@@ -1,12 +1,12 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Api;
 
-use Magento\Webapi\Exception as HTTPExceptionCodes;
-use Magento\Webapi\Model\Rest\Config as RestConfig;
+use Magento\Framework\Webapi\Exception as HTTPExceptionCodes;
 
 class ProductAttributeRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstract
 {
@@ -51,8 +51,8 @@ class ProductAttributeRepositoryTest extends \Magento\TestFramework\TestCase\Web
 
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => self::RESOURCE_PATH . '/',
-                'httpMethod' => RestConfig::HTTP_METHOD_PUT,
+                'resourcePath' => self::RESOURCE_PATH . '?' . http_build_query($searchCriteria),
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -97,7 +97,7 @@ class ProductAttributeRepositoryTest extends \Magento\TestFramework\TestCase\Web
         } catch (\SoapFault $e) {
             //Expects soap exception
         } catch (\Exception $e) {
-            $this->assertEquals(HTTPExceptionCodes::HTTP_INTERNAL_ERROR, $e->getCode());
+            $this->assertEquals(HTTPExceptionCodes::HTTP_BAD_REQUEST, $e->getCode());
         }
     }
 
@@ -124,7 +124,7 @@ class ProductAttributeRepositoryTest extends \Magento\TestFramework\TestCase\Web
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $attribute['attribute_id'],
-                'httpMethod' => RestConfig::HTTP_METHOD_PUT,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_PUT,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -159,12 +159,12 @@ class ProductAttributeRepositoryTest extends \Magento\TestFramework\TestCase\Web
     public function testDeleteNoSuchEntityException()
     {
         $attributeCode = 'some_test_code';
-        $expectedMessage = 'Attribute with attributeCode "' . $attributeCode . '" does not exist.';
+        $expectedMessage = 'Attribute with attributeCode "%1" does not exist.';
 
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $attributeCode,
-                'httpMethod' => RestConfig::HTTP_METHOD_DELETE,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_DELETE,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -185,6 +185,7 @@ class ProductAttributeRepositoryTest extends \Magento\TestFramework\TestCase\Web
         } catch (\Exception $e) {
             $errorObj = $this->processRestExceptionResult($e);
             $this->assertEquals($expectedMessage, $errorObj['message']);
+            $this->assertEquals([$attributeCode], $errorObj['parameters']);
             $this->assertEquals(HTTPExceptionCodes::HTTP_NOT_FOUND, $e->getCode());
         }
     }
@@ -210,7 +211,7 @@ class ProductAttributeRepositoryTest extends \Magento\TestFramework\TestCase\Web
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/',
-                'httpMethod' => RestConfig::HTTP_METHOD_POST,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -230,7 +231,7 @@ class ProductAttributeRepositoryTest extends \Magento\TestFramework\TestCase\Web
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $attributeCode,
-                'httpMethod' => RestConfig::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -253,7 +254,7 @@ class ProductAttributeRepositoryTest extends \Magento\TestFramework\TestCase\Web
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $attributeCode,
-                'httpMethod' => RestConfig::HTTP_METHOD_DELETE,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_DELETE,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,

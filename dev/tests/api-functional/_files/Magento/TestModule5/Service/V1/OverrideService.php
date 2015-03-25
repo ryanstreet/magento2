@@ -1,35 +1,35 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\TestModule5\Service\V1;
 
-use Magento\TestModule5\Service\V1\Entity\AllSoapAndRestBuilder;
+use Magento\TestModule5\Service\V1\Entity\AllSoapAndRestFactory;
 
 class OverrideService implements OverrideServiceInterface
 {
     /**
-     * @var AllSoapAndRestBuilder
+     * @var AllSoapAndRestFactory
      */
-    protected $builder;
+    protected $factory;
 
     /**
-     * @param AllSoapAndRestBuilder $builder
+     * @param AllSoapAndRestFactory $factory
      */
-    public function __construct(AllSoapAndRestBuilder $builder)
+    public function __construct(AllSoapAndRestFactory $factory)
     {
-        $this->builder = $builder;
+        $this->factory = $factory;
     }
     /**
      * {@inheritdoc}
      */
     public function scalarUpdate($entityId, $name, $hasOrders)
     {
-        return $this->builder
+        return $this->factory->create()
             ->setEntityId($entityId)
             ->setName($name)
-            ->setHasOrders($hasOrders)
-            ->create();
+            ->setHasOrders($hasOrders);
     }
 }

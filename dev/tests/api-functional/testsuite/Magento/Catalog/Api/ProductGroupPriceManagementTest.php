@@ -1,13 +1,13 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\Catalog\Api;
 
 use Magento\TestFramework\TestCase\WebapiAbstract;
-use Magento\Webapi\Model\Rest\Config as RestConfig;
 
 class ProductGroupPriceManagementTest extends WebapiAbstract
 {
@@ -24,7 +24,7 @@ class ProductGroupPriceManagementTest extends WebapiAbstract
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . $productSku . '/group-prices',
-                'httpMethod' => RestConfig::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -32,7 +32,7 @@ class ProductGroupPriceManagementTest extends WebapiAbstract
                 'operation' => self::SERVICE_NAME . 'GetList',
             ],
         ];
-        $groupPriceList = $this->_webApiCall($serviceInfo, ['productSku' => $productSku]);
+        $groupPriceList = $this->_webApiCall($serviceInfo, ['sku' => $productSku]);
         $this->assertCount(2, $groupPriceList);
         $this->assertEquals(9, $groupPriceList[0]['value']);
         $this->assertEquals(7, $groupPriceList[1]['value']);
@@ -48,7 +48,7 @@ class ProductGroupPriceManagementTest extends WebapiAbstract
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . $productSku . "/group-prices/" . $customerGroupId,
-                'httpMethod' => RestConfig::HTTP_METHOD_DELETE,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_DELETE,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -56,7 +56,7 @@ class ProductGroupPriceManagementTest extends WebapiAbstract
                 'operation' => self::SERVICE_NAME . 'Remove',
             ],
         ];
-        $requestData = ['productSku' => $productSku, 'customerGroupId' => $customerGroupId];
+        $requestData = ['sku' => $productSku, 'customerGroupId' => $customerGroupId];
         $this->assertTrue($this->_webApiCall($serviceInfo, $requestData));
     }
 
@@ -69,7 +69,7 @@ class ProductGroupPriceManagementTest extends WebapiAbstract
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => '/V1/products/' . $productSku . '/group-prices/1/price/10',
-                'httpMethod' => RestConfig::HTTP_METHOD_POST,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -77,7 +77,7 @@ class ProductGroupPriceManagementTest extends WebapiAbstract
                 'operation' => self::SERVICE_NAME . 'Add',
             ],
         ];
-        $this->_webApiCall($serviceInfo, ['productSku' => $productSku, 'customerGroupId' => 1, 'price' => 10]);
+        $this->_webApiCall($serviceInfo, ['sku' => $productSku, 'customerGroupId' => 1, 'price' => 10]);
         $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         /** @var \Magento\Catalog\Api\ProductGroupPriceManagementInterface $service */
         $service = $objectManager->get('Magento\Catalog\Api\ProductGroupPriceManagementInterface');
@@ -97,7 +97,7 @@ class ProductGroupPriceManagementTest extends WebapiAbstract
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => '/V1/products/' . $productSku . '/group-prices/1/price/10',
-                'httpMethod' => RestConfig::HTTP_METHOD_POST,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -106,7 +106,7 @@ class ProductGroupPriceManagementTest extends WebapiAbstract
             ],
 
         ];
-        $this->_webApiCall($serviceInfo, ['productSku' => $productSku, 'customerGroupId' => 1, 'price' => 10]);
+        $this->_webApiCall($serviceInfo, ['sku' => $productSku, 'customerGroupId' => 1, 'price' => 10]);
         $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         /** @var \Magento\Catalog\Api\ProductGroupPriceManagementInterface $service */
         $service = $objectManager->get('Magento\Catalog\Api\ProductGroupPriceManagementInterface');

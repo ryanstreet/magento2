@@ -1,11 +1,11 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Webapi\Routing;
 
 use Magento\TestModule5\Service\V1\Entity\AllSoapAndRest;
-use Magento\Webapi\Model\Rest\Config as RestConfig;
 
 class GettersTest extends \Magento\Webapi\Routing\BaseService
 {
@@ -37,7 +37,7 @@ class GettersTest extends \Magento\Webapi\Routing\BaseService
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => $this->_restResourcePath . $itemId,
-                'httpMethod' => RestConfig::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
             'soap' => [
                 'service' => $this->_soapService,

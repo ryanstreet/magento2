@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\TestFramework\TestCase\Webapi\Adapter;
 
@@ -28,11 +29,6 @@ class Soap implements \Magento\TestFramework\TestCase\Webapi\AdapterInterface
     protected $_soapConfig;
 
     /**
-     * @var \Magento\Webapi\Helper\Data
-     */
-    protected $_helper;
-
-    /**
      * @var SimpleDataObjectConverter
      */
     protected $_converter;
@@ -45,18 +41,17 @@ class Soap implements \Magento\TestFramework\TestCase\Webapi\AdapterInterface
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = Bootstrap::getObjectManager();
         $this->_soapConfig = $objectManager->get('Magento\Webapi\Model\Soap\Config');
-        $this->_helper = $objectManager->get('Magento\Webapi\Helper\Data');
         $this->_converter = $objectManager->get('Magento\Framework\Api\SimpleDataObjectConverter');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function call($serviceInfo, $arguments = [])
+    public function call($serviceInfo, $arguments = [], $storeCode = null, $integration = null)
     {
         $soapOperation = $this->_getSoapOperation($serviceInfo);
         $arguments = $this->_converter->convertKeysToCamelCase($arguments);
-        $soapResponse = $this->_getSoapClient($serviceInfo)->$soapOperation($arguments);
+        $soapResponse = $this->_getSoapClient($serviceInfo, $storeCode)->$soapOperation($arguments);
         //Convert to snake case for tests to use same assertion data for both SOAP and REST tests
         $result = (is_array($soapResponse) || is_object($soapResponse))
             ? $this->toSnakeCase($this->_converter->convertStdObjectToArray($soapResponse, true))
@@ -70,12 +65,14 @@ class Soap implements \Magento\TestFramework\TestCase\Webapi\AdapterInterface
      * Get proper SOAP client instance that is initialized with with WSDL corresponding to requested service interface.
      *
      * @param string $serviceInfo PHP service interface name, should include version if present
+     * @param string|null $storeCode
      * @return \Zend\Soap\Client
      */
-    protected function _getSoapClient($serviceInfo)
+    protected function _getSoapClient($serviceInfo, $storeCode = null)
     {
         $wsdlUrl = $this->generateWsdlUrl(
-            [$this->_getSoapServiceName($serviceInfo) . $this->_getSoapServiceVersion($serviceInfo)]
+            [$this->_getSoapServiceName($serviceInfo) . $this->_getSoapServiceVersion($serviceInfo)],
+            $storeCode
         );
         /** Check if there is SOAP client initialized with requested WSDL available */
         if (!isset($this->_soapClients[$wsdlUrl])) {
@@ -116,16 +113,22 @@ class Soap implements \Magento\TestFramework\TestCase\Webapi\AdapterInterface
      *     'catalogProductV1',
      *     'customerV2'
      * );</pre>
+     * @param string|null $storeCode
      * @return string
      */
-    public function generateWsdlUrl($services)
+    public function generateWsdlUrl($services, $storeCode = null)
     {
         /** Sort list of services to avoid having different WSDL URLs for the identical lists of services. */
         //TODO: This may change since same resource of multiple versions may be allowed after namespace changes
         ksort($services);
         /** @var \Magento\Store\Model\StoreManagerInterface $storeManager */
-        $storeManager = Bootstrap::getObjectManager()->get('Magento\Store\Model\StoreManagerInterface');
-        $storeCode = $storeManager->getStore()->getCode();
+        $storeCode = $storeCode !== null
+            ? (string)$storeCode
+            : Bootstrap::getObjectManager()
+                ->get('Magento\Store\Model\StoreManagerInterface')
+                ->getStore()
+                ->getCode();
+
         /** TESTS_BASE_URL is initialized in PHPUnit configuration */
         $wsdlUrl = rtrim(TESTS_BASE_URL, '/') . self::WSDL_BASE_PATH . '/' . $storeCode . '?wsdl=1&services=';
         $wsdlResourceArray = [];
@@ -205,7 +208,7 @@ class Soap implements \Magento\TestFramework\TestCase\Webapi\AdapterInterface
         if (isset($serviceInfo['soap']['service'])) {
             $serviceName = $serviceInfo['soap']['service'];
         } elseif (isset($serviceInfo['serviceInterface'])) {
-            $serviceName = $this->_helper->getServiceName($serviceInfo['serviceInterface'], false);
+            $serviceName = $this->_soapConfig->getServiceName($serviceInfo['serviceInterface'], false);
         } else {
             throw new \LogicException("Service name cannot be identified.");
         }

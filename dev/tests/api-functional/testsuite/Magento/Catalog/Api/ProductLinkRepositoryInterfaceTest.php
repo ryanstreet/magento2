@@ -1,13 +1,13 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Api;
 
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
-use Magento\Webapi\Model\Rest\Config as RestConfig;
 
 class ProductLinkRepositoryInterfaceTest extends WebapiAbstract
 {
@@ -38,7 +38,7 @@ class ProductLinkRepositoryInterfaceTest extends WebapiAbstract
             [
                 'rest' => [
                     'resourcePath' => self::RESOURCE_PATH . $productSku . '/links/' . $linkType . '/' . $linkedSku,
-                    'httpMethod' => RestConfig::HTTP_METHOD_DELETE,
+                    'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_DELETE,
                 ],
                 'soap' => [
                     'service' => self::SERVICE_NAME,
@@ -47,7 +47,7 @@ class ProductLinkRepositoryInterfaceTest extends WebapiAbstract
                 ],
             ],
             [
-                'productSku' => $productSku,
+                'sku' => $productSku,
                 'type' => $linkType,
                 'linkedProductSku' => $linkedSku
             ]
@@ -72,7 +72,7 @@ class ProductLinkRepositoryInterfaceTest extends WebapiAbstract
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . $productSku . '/links/' . $linkType,
-                'httpMethod' => RestConfig::HTTP_METHOD_PUT,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_PUT,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,

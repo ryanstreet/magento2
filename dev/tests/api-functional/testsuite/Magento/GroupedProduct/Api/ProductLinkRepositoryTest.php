@@ -1,11 +1,11 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\GroupedProduct\Api;
 
-use Magento\Webapi\Model\Rest\Config as RestConfig;
 use Magento\TestFramework\Helper\Bootstrap;
 
 class ProductLinkRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstract
@@ -37,15 +37,15 @@ class ProductLinkRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAb
             'linked_product_type' => 'simple',
             'linked_product_sku' => 'simple',
             'position' => 3,
-            'custom_attributes' => [
-                'qty' => ['attribute_code' => 'qty', 'value' => (float) 300.0000],
+            'extension_attributes' => [
+                'qty' =>  (float) 300.0000,
             ],
         ];
 
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . $productSku . '/links/' . $linkType,
-                'httpMethod' => RestConfig::HTTP_METHOD_PUT,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_PUT,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -55,7 +55,7 @@ class ProductLinkRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAb
         ];
         $this->_webApiCall($serviceInfo, ['entity' => $productData]);
 
-        /** @var \Magento\Catalog\Model\ProductLink\Management $linkManagement */
+        /** @var \Magento\Catalog\Api\ProductLinkManagementInterface $linkManagement */
         $linkManagement = $this->objectManager->get('Magento\Catalog\Api\ProductLinkManagementInterface');
         $actual = $linkManagement->getLinkedItemsByType($productSku, $linkType);
         array_walk($actual, function (&$item) {

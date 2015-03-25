@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Framework\DB;
 
@@ -137,7 +138,7 @@ class Query implements QueryInterface
      */
     public function getSize()
     {
-        if (is_null($this->totalRecords)) {
+        if ($this->totalRecords === null) {
             $sql = $this->getSelectCountSql();
             $this->totalRecords = $this->getConnection()->fetchOne($sql, $this->bindParams);
         }

@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\Customer\Api;
@@ -10,7 +11,6 @@ use Magento\Customer\Model\CustomerRegistry;
 use Magento\Integration\Model\Oauth\Token as TokenModel;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\Helper\Customer as CustomerHelper;
-use Magento\Webapi\Model\Rest\Config as RestConfig;
 
 /**
  * Class AccountManagementMeTest
@@ -111,7 +111,7 @@ class AccountManagementMeTest extends \Magento\TestFramework\TestCase\WebapiAbst
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/password',
-                'httpMethod' => RestConfig::HTTP_METHOD_PUT,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_PUT,
                 'token' => $this->token,
             ],
         ];
@@ -138,7 +138,7 @@ class AccountManagementMeTest extends \Magento\TestFramework\TestCase\WebapiAbst
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH,
-                'httpMethod' => RestConfig::HTTP_METHOD_PUT,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_PUT,
                 'token' => $this->token,
             ],
         ];
@@ -168,7 +168,7 @@ class AccountManagementMeTest extends \Magento\TestFramework\TestCase\WebapiAbst
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH,
-                'httpMethod' => RestConfig::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
                 'token' => $this->token,
             ],
         ];
@@ -185,7 +185,7 @@ class AccountManagementMeTest extends \Magento\TestFramework\TestCase\WebapiAbst
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/activate',
-                'httpMethod' => RestConfig::HTTP_METHOD_PUT,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_PUT,
                 'token' => $this->token,
             ],
         ];
@@ -217,7 +217,7 @@ class AccountManagementMeTest extends \Magento\TestFramework\TestCase\WebapiAbst
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => "/V1/customers/me/billingAddress",
-                'httpMethod' => \Magento\Webapi\Model\Rest\Config::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
                 'token' => $this->token,
             ],
         ];
@@ -238,7 +238,7 @@ class AccountManagementMeTest extends \Magento\TestFramework\TestCase\WebapiAbst
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => "/V1/customers/me/shippingAddress",
-                'httpMethod' => \Magento\Webapi\Model\Rest\Config::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
                 'token' => $this->token,
             ],
         ];
@@ -326,7 +326,7 @@ class AccountManagementMeTest extends \Magento\TestFramework\TestCase\WebapiAbst
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH_CUSTOMER_TOKEN,
-                'httpMethod' => \Magento\Webapi\Model\Rest\Config::HTTP_METHOD_POST,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_POST,
             ],
         ];
         $requestData = ['username' => $username, 'password' => $password];

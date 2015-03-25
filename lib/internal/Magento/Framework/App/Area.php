@@ -1,12 +1,17 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\App;
 
+use Magento\Framework\ObjectManager\ConfigLoaderInterface;
+
 /**
  * Application area model
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Area implements \Magento\Framework\App\AreaInterface
 {
@@ -57,7 +62,7 @@ class Area implements \Magento\Framework\App\AreaInterface
     protected $_objectManager;
 
     /**
-     * @var \Magento\Framework\App\ObjectManager\ConfigLoader
+     * @var ConfigLoaderInterface
      */
     protected $_diConfigLoader;
 
@@ -88,7 +93,7 @@ class Area implements \Magento\Framework\App\AreaInterface
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Magento\Framework\TranslateInterface $translator
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     * @param \Magento\Framework\App\ObjectManager\ConfigLoader $diConfigLoader
+     * @param ConfigLoaderInterface $diConfigLoader
      * @param \Magento\Framework\App\DesignInterface $design
      * @param \Magento\Framework\App\ScopeResolverInterface $scopeResolver
      * @param \Magento\Framework\View\DesignExceptions $designExceptions
@@ -99,7 +104,7 @@ class Area implements \Magento\Framework\App\AreaInterface
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Framework\TranslateInterface $translator,
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Framework\App\ObjectManager\ConfigLoader $diConfigLoader,
+        ConfigLoaderInterface $diConfigLoader,
         \Magento\Framework\App\DesignInterface $design,
         \Magento\Framework\App\ScopeResolverInterface $scopeResolver,
         \Magento\Framework\View\DesignExceptions $designExceptions,
@@ -124,7 +129,7 @@ class Area implements \Magento\Framework\App\AreaInterface
      */
     public function load($part = null)
     {
-        if (is_null($part)) {
+        if ($part === null) {
             $this->_loadPart(self::PART_CONFIG)->_loadPart(self::PART_DESIGN)->_loadPart(self::PART_TRANSLATE);
         } else {
             $this->_loadPart($part);

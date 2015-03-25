@@ -1,11 +1,12 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Webapi\Routing;
 
 use Magento\Framework\Exception\AuthorizationException;
-use Magento\Webapi\Exception as WebapiException;
+use Magento\Framework\Webapi\Exception as WebapiException;
 
 /**
  * Base class for all Service based routing tests

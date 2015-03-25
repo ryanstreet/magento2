@@ -2,7 +2,8 @@
 /**
  * Generic test case for Web API functional tests.
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\TestFramework\TestCase;
 
@@ -10,6 +11,9 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
 use Magento\Webapi\Model\Soap\Fault;
 
+/**
+ * @SuppressWarnings(PHPMD.NumberOfChildren)
+ */
 abstract class WebapiAbstract extends \PHPUnit_Framework_TestCase
 {
     /** TODO: Reconsider implementation of fixture-management methods after implementing several tests */
@@ -154,15 +158,22 @@ abstract class WebapiAbstract extends \PHPUnit_Framework_TestCase
      * @param array $serviceInfo
      * @param array $arguments
      * @param string|null $webApiAdapterCode
+     * @param string|null $storeCode
+     * @param \Magento\Integration\Model\Integration|null $integration
      * @return array|int|string|float|bool Web API call results
      */
-    protected function _webApiCall($serviceInfo, $arguments = [], $webApiAdapterCode = null)
-    {
-        if (is_null($webApiAdapterCode)) {
+    protected function _webApiCall(
+        $serviceInfo,
+        $arguments = [],
+        $webApiAdapterCode = null,
+        $storeCode = null,
+        $integration = null
+    ) {
+        if ($webApiAdapterCode === null) {
             /** Default adapter code is defined in PHPUnit configuration */
             $webApiAdapterCode = strtolower(TESTS_WEB_API_ADAPTER);
         }
-        return $this->_getWebApiAdapter($webApiAdapterCode)->call($serviceInfo, $arguments);
+        return $this->_getWebApiAdapter($webApiAdapterCode)->call($serviceInfo, $arguments, $storeCode, $integration);
     }
 
     /**
@@ -290,7 +301,7 @@ abstract class WebapiAbstract extends \PHPUnit_Framework_TestCase
      */
     protected static function _setFixtureNamespace()
     {
-        if (!is_null(self::$_fixturesNamespace)) {
+        if (self::$_fixturesNamespace !== null) {
             throw new \RuntimeException('Fixture namespace is already set.');
         }
         self::$_fixturesNamespace = uniqid();
@@ -315,7 +326,7 @@ abstract class WebapiAbstract extends \PHPUnit_Framework_TestCase
     protected static function _getFixtureNamespace()
     {
         $fixtureNamespace = self::$_fixturesNamespace;
-        if (is_null($fixtureNamespace)) {
+        if ($fixtureNamespace === null) {
             throw new \RuntimeException('Fixture namespace must be set.');
         }
         return $fixtureNamespace;
@@ -467,8 +478,8 @@ abstract class WebapiAbstract extends \PHPUnit_Framework_TestCase
         }
 
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        /** @var $config \Magento\Backend\Model\Config */
-        $config = $objectManager->create('Magento\Backend\Model\Config');
+        /** @var $config \Magento\Config\Model\Config */
+        $config = $objectManager->create('Magento\Config\Model\Config');
         $data[$group]['fields'][$node]['value'] = $value;
         $config->setSection($section)->setGroups($data)->save();
 

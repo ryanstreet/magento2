@@ -1,7 +1,8 @@
 <?php
 /**
  *
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Wishlist\Model;
 
@@ -14,6 +15,9 @@ use Magento\Framework\Message\ManagerInterface as MessageManager;
 use Magento\Framework\UrlInterface;
 use Magento\Wishlist\Helper\Data as WishlistHelper;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ItemCarrier
 {
     /**
@@ -100,6 +104,9 @@ class ItemCarrier
      * @param Wishlist $wishlist
      * @param array $qtys
      * @return string
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function moveAllToCart(Wishlist $wishlist, $qtys)
     {
@@ -131,7 +138,7 @@ class ItemCarrier
                 if ($item->addToCart($cart, $isOwner)) {
                     $addedItems[] = $item->getProduct();
                 }
-            } catch (\Magento\Framework\Model\Exception $e) {
+            } catch (\Magento\Framework\Exception\LocalizedException $e) {
                 if ($e->getCode() == \Magento\Wishlist\Model\Item::EXCEPTION_CODE_NOT_SALABLE) {
                     $notSalable[] = $item;
                 } elseif ($e->getCode() == \Magento\Wishlist\Model\Item::EXCEPTION_CODE_HAS_REQUIRED_OPTIONS) {

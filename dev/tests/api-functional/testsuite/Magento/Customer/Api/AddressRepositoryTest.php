@@ -1,7 +1,10 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
 
 namespace Magento\Customer\Api;
 
@@ -74,7 +77,7 @@ class AddressRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstra
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => "/V1/customers/addresses/{$fixtureAddressId}",
-                'httpMethod' => \Magento\Webapi\Model\Rest\Config::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
             'soap' => [
                 'service' => self::SOAP_SERVICE_NAME,
@@ -101,7 +104,7 @@ class AddressRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstra
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => "/V1/addresses/{$fixtureAddressId}",
-                'httpMethod' => \Magento\Webapi\Model\Rest\Config::HTTP_METHOD_DELETE,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_DELETE,
             ],
             'soap' => [
                 'service' => self::SOAP_SERVICE_NAME,

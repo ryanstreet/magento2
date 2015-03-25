@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Customer\Api;
 
@@ -10,8 +11,7 @@ use Magento\Framework\Exception\InputException;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\Helper\Customer as CustomerHelper;
 use Magento\TestFramework\TestCase\WebapiAbstract;
-use Magento\Webapi\Exception as HTTPExceptionCodes;
-use Magento\Webapi\Model\Rest\Config as RestConfig;
+use Magento\Framework\Webapi\Exception as HTTPExceptionCodes;
 
 /**
  * Test class for Magento\Customer\Api\CustomerRepositoryInterface
@@ -36,14 +36,14 @@ class CustomerRepositoryTest extends WebapiAbstract
     private $customerRepository;
 
     /**
-     * @var \Magento\Customer\Api\Data\AddressDataBuilder
+     * @var \Magento\Framework\Api\DataObjectHelper
      */
-    private $addressBuilder;
+    private $dataObjectHelper;
 
     /**
-     * @var \Magento\Customer\Api\Data\CustomerDataBuilder
+     * @var \Magento\Customer\Api\Data\CustomerInterfaceFactory
      */
-    private $customerBuilder;
+    private $customerDataFactory;
 
     /**
      * @var \Magento\Framework\Api\SearchCriteriaBuilder
@@ -93,11 +93,11 @@ class CustomerRepositoryTest extends WebapiAbstract
             'Magento\Customer\Api\CustomerRepositoryInterface',
             ['customerRegistry' => $this->customerRegistry]
         );
-        $this->addressBuilder = Bootstrap::getObjectManager()->create(
-            'Magento\Customer\Api\Data\AddressDataBuilder'
+        $this->dataObjectHelper = Bootstrap::getObjectManager()->create(
+            'Magento\Framework\Api\DataObjectHelper'
         );
-        $this->customerBuilder = Bootstrap::getObjectManager()->create(
-            'Magento\Customer\Api\Data\CustomerDataBuilder'
+        $this->customerDataFactory = Bootstrap::getObjectManager()->create(
+            'Magento\Customer\Api\Data\CustomerInterfaceFactory'
         );
         $this->searchCriteriaBuilder = Bootstrap::getObjectManager()->create(
             'Magento\Framework\Api\SearchCriteriaBuilder'
@@ -122,7 +122,7 @@ class CustomerRepositoryTest extends WebapiAbstract
                 $serviceInfo = [
                     'rest' => [
                         'resourcePath' => self::RESOURCE_PATH . '/' . $customerId,
-                        'httpMethod' => RestConfig::HTTP_METHOD_DELETE,
+                        'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_DELETE,
                     ],
                     'soap' => [
                         'service' => self::SERVICE_NAME,
@@ -147,7 +147,7 @@ class CustomerRepositoryTest extends WebapiAbstract
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $customerData[Customer::ID],
-                'httpMethod' => RestConfig::HTTP_METHOD_DELETE,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_DELETE,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -177,7 +177,7 @@ class CustomerRepositoryTest extends WebapiAbstract
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $invalidId,
-                'httpMethod' => RestConfig::HTTP_METHOD_DELETE,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_DELETE,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -212,12 +212,17 @@ class CustomerRepositoryTest extends WebapiAbstract
         $existingCustomerDataObject = $this->_getCustomerData($customerData[Customer::ID]);
         $lastName = $existingCustomerDataObject->getLastname();
         $customerData[Customer::LASTNAME] = $lastName . 'Updated';
-        $newCustomerDataObject = $this->customerBuilder->populateWithArray($customerData)->create();
+        $newCustomerDataObject = $this->customerDataFactory->create();
+        $this->dataObjectHelper->populateWithArray(
+            $newCustomerDataObject,
+            $customerData,
+            '\Magento\Customer\Api\Data\CustomerInterface'
+        );
 
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . "/{$customerData[Customer::ID]}",
-                'httpMethod' => RestConfig::HTTP_METHOD_PUT,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_PUT,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -231,7 +236,7 @@ class CustomerRepositoryTest extends WebapiAbstract
         );
         $requestData = ['customer' => $newCustomerDataObject];
         $response = $this->_webApiCall($serviceInfo, $requestData);
-        $this->assertTrue(!is_null($response));
+        $this->assertTrue($response !== null);
 
         //Verify if the customer is updated
         $existingCustomerDataObject = $this->_getCustomerData($customerData[Customer::ID]);
@@ -247,12 +252,17 @@ class CustomerRepositoryTest extends WebapiAbstract
         $existingCustomerDataObject = $this->_getCustomerData($customerData[Customer::ID]);
         $lastName = $existingCustomerDataObject->getLastname();
         $customerData[Customer::LASTNAME] = $lastName . 'Updated';
-        $newCustomerDataObject = $this->customerBuilder->populateWithArray($customerData)->create();
+        $newCustomerDataObject = $this->customerDataFactory->create();
+        $this->dataObjectHelper->populateWithArray(
+            $newCustomerDataObject,
+            $customerData,
+            '\Magento\Customer\Api\Data\CustomerInterface'
+        );
 
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . "/{$customerData[Customer::ID]}",
-                'httpMethod' => RestConfig::HTTP_METHOD_PUT,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_PUT,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -293,13 +303,17 @@ class CustomerRepositoryTest extends WebapiAbstract
         //Set non-existent id = -1
         $customerData[Customer::LASTNAME] = $lastName . 'Updated';
         $customerData[Customer::ID] = -1;
-
-        $newCustomerDataObject = $this->customerBuilder->populateWithArray($customerData)->create();
+        $newCustomerDataObject = $this->customerDataFactory->create();
+        $this->dataObjectHelper->populateWithArray(
+            $newCustomerDataObject,
+            $customerData,
+            '\Magento\Customer\Api\Data\CustomerInterface'
+        );
 
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . "/-1",
-                'httpMethod' => RestConfig::HTTP_METHOD_PUT,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_PUT,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -344,10 +358,15 @@ class CustomerRepositoryTest extends WebapiAbstract
             ->setValue($customerData[Customer::EMAIL])
             ->create();
         $this->searchCriteriaBuilder->addFilter([$filter]);
+        $searchData = $this->dataObjectProcessor->buildOutputDataArray(
+            $this->searchCriteriaBuilder->create(),
+            'Magento\Framework\Api\SearchCriteriaInterface'
+        );
+        $requestData = ['searchCriteria' => $searchData];
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => self::RESOURCE_PATH . '/search',
-                'httpMethod' => RestConfig::HTTP_METHOD_POST,
+                'resourcePath' => self::RESOURCE_PATH . '/search' . '?' . http_build_query($requestData),
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -355,11 +374,6 @@ class CustomerRepositoryTest extends WebapiAbstract
                 'operation' => self::SERVICE_NAME . 'getList',
             ],
         ];
-        $searchData = $this->dataObjectProcessor->buildOutputDataArray(
-            $this->searchCriteriaBuilder->create(),
-            'Magento\Framework\Api\SearchCriteriaInterface'
-        );
-        $requestData = ['searchCriteria' => $searchData];
         $searchResults = $this->_webApiCall($serviceInfo, $requestData);
         $this->assertEquals(1, $searchResults['total_count']);
         $this->assertEquals($customerData[Customer::ID], $searchResults['items'][0][Customer::ID]);
@@ -385,7 +399,7 @@ class CustomerRepositoryTest extends WebapiAbstract
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/search?' . $searchQueryString,
-                'httpMethod' => RestConfig::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
         ];
         $searchResults = $this->_webApiCall($serviceInfo);
@@ -402,7 +416,7 @@ class CustomerRepositoryTest extends WebapiAbstract
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/search',
-                'httpMethod' => RestConfig::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
         ];
         try {
@@ -449,10 +463,12 @@ class CustomerRepositoryTest extends WebapiAbstract
         $this->searchCriteriaBuilder->setSortOrders([$sortOrder]);
 
         $searchCriteria = $this->searchCriteriaBuilder->create();
+        $searchData = $searchCriteria->__toArray();
+        $requestData = ['searchCriteria' => $searchData];
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => self::RESOURCE_PATH . '/search',
-                'httpMethod' => RestConfig::HTTP_METHOD_POST,
+                'resourcePath' => self::RESOURCE_PATH . '/search' . '?' . http_build_query($requestData),
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -460,8 +476,6 @@ class CustomerRepositoryTest extends WebapiAbstract
                 'operation' => self::SERVICE_NAME . 'getList',
             ],
         ];
-        $searchData = $searchCriteria->__toArray();
-        $requestData = ['searchCriteria' => $searchData];
         $searchResults = $this->_webApiCall($serviceInfo, $requestData);
         $this->assertEquals(2, $searchResults['total_count']);
         $this->assertEquals($customerData1[Customer::ID], $searchResults['items'][0][Customer::ID]);
@@ -496,7 +510,7 @@ class CustomerRepositoryTest extends WebapiAbstract
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/search?' . $searchQueryString,
-                'httpMethod' => RestConfig::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
         ];
         $searchResults = $this->_webApiCall($serviceInfo);
@@ -525,10 +539,12 @@ class CustomerRepositoryTest extends WebapiAbstract
         $this->searchCriteriaBuilder->addFilter([$filter1, $filter2]);
         $this->searchCriteriaBuilder->addFilter([$filter3]);
         $searchCriteria = $this->searchCriteriaBuilder->create();
+        $searchData = $searchCriteria->__toArray();
+        $requestData = ['searchCriteria' => $searchData];
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => self::RESOURCE_PATH . '/search',
-                'httpMethod' => RestConfig::HTTP_METHOD_POST,
+                'resourcePath' => self::RESOURCE_PATH . '/search' . '?' . http_build_query($requestData),
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -536,8 +552,6 @@ class CustomerRepositoryTest extends WebapiAbstract
                 'operation' => self::SERVICE_NAME . 'getList',
             ],
         ];
-        $searchData = $searchCriteria->__toArray();
-        $requestData = ['searchCriteria' => $searchData];
         $searchResults = $this->_webApiCall($serviceInfo, $requestData);
         $this->assertEquals(0, $searchResults['total_count'], 'No results expected for non-existent email.');
     }
@@ -569,7 +583,7 @@ class CustomerRepositoryTest extends WebapiAbstract
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/search?' . $searchQueryString,
-                'httpMethod' => RestConfig::HTTP_METHOD_GET,
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
         ];
         $searchResults = $this->_webApiCall($serviceInfo, $requestData);
@@ -602,10 +616,12 @@ class CustomerRepositoryTest extends WebapiAbstract
         $this->searchCriteriaBuilder->addFilter([$filter2, $filter3]);
         $this->searchCriteriaBuilder->addFilter([$filter4]);
         $searchCriteria = $this->searchCriteriaBuilder->setCurrentPage(1)->setPageSize(10)->create();
+        $searchData = $searchCriteria->__toArray();
+        $requestData = ['searchCriteria' => $searchData];
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => self::RESOURCE_PATH . '/search',
-                'httpMethod' => RestConfig::HTTP_METHOD_POST,
+                'resourcePath' => self::RESOURCE_PATH . '/search' . '?' . http_build_query($requestData),
+                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
             'soap' => [
                 'service' => self::SERVICE_NAME,
@@ -613,8 +629,6 @@ class CustomerRepositoryTest extends WebapiAbstract
                 'operation' => self::SERVICE_NAME . 'getList',
             ],
         ];
-        $searchData = $searchCriteria->__toArray();
-        $requestData = ['searchCriteria' => $searchData];
         $searchResults = $this->_webApiCall($serviceInfo, $requestData);
         $this->assertEquals(1, $searchResults['total_count']);
         $this->assertEquals($customerData1[Customer::ID], $searchResults['items'][0][Customer::ID]);
@@ -630,6 +644,7 @@ class CustomerRepositoryTest extends WebapiAbstract
         $searchCriteria = $this->searchCriteriaBuilder->create();
         $searchData = $searchCriteria->__toArray();
         $requestData = ['searchCriteria' => $searchData];
+        $serviceInfo['rest']['resourcePath'] = self::RESOURCE_PATH . '/search' . '?' . http_build_query($requestData);
         $searchResults = $this->_webApiCall($serviceInfo, $requestData);
         $this->assertEquals(0, $searchResults['total_count']);
     }

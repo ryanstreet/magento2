@@ -1,7 +1,11 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
+
 namespace Magento\TestModule3\Service\V1\Entity;
 
 class Parameter extends \Magento\Framework\Api\AbstractExtensibleObject
@@ -17,6 +21,17 @@ class Parameter extends \Magento\Framework\Api\AbstractExtensibleObject
     }
 
     /**
+     * Set Name.
+     *
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        return $this->setData('name', $name);
+    }
+
+    /**
      * Get value.
      *
      * @return string $value
@@ -24,5 +39,16 @@ class Parameter extends \Magento\Framework\Api\AbstractExtensibleObject
     public function getValue()
     {
         return $this->_data['value'];
+    }
+
+    /**
+     * Set value.
+     *
+     * @param string $value
+     * @return $this
+     */
+    public function setValue($value)
+    {
+        return $this->setData('value', $value);
     }
 }

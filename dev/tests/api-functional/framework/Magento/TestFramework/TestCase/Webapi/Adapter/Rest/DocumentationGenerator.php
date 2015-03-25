@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 namespace Magento\TestFramework\TestCase\Webapi\Adapter\Rest;
@@ -23,7 +24,7 @@ class DocumentationGenerator
     {
         $content = $this->generateHtmlContent($httpMethod, $resourcePath, $arguments, $response);
         $filePath = $this->generateFileName($resourcePath);
-        if (is_null($filePath)) {
+        if ($filePath === null) {
             return;
         }
         if (!is_writable(dirname($filePath))) {
@@ -208,7 +209,7 @@ HTML;
                 throw new \RuntimeException('Unable to create missing directory for REST documentation generation');
             }
         }
-        if (!is_null($fileName)) {
+        if ($fileName !== null) {
             $filePath = $pathToFile . $fileName . '.html';
             return $filePath;
         }

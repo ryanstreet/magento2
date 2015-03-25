@@ -1,6 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2014 X.commerce, Inc. (http://www.magentocommerce.com)
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\TestModule4\Service\V1\Entity;
 
@@ -15,10 +16,28 @@ class DataObjectResponse extends \Magento\Framework\Api\AbstractExtensibleObject
     }
 
     /**
+     * @param int $entityId
+     * @return $this
+     */
+    public function setEntityId($entityId)
+    {
+        return $this->setData('entity_id', $entityId);
+    }
+
+    /**
      * @return string
      */
     public function getName()
     {
         return $this->_get('name');
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        return $this->setData('name', $name);
     }
 }
